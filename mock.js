@@ -7,7 +7,8 @@
    - 用色只取 DESIGN §2 token 字面量（Canvas 吃不到 CSS 变量）
    - 性能（PLAN 决策 6）：DPR 上限 2；prefers-reduced-motion 画静帧；
      页面隐藏时暂停绘制
-   暴露 API：MockCam.isEnabled() / start(canvas, part) / stop()
+   暴露 API：MockCam.isEnabled() / start(canvas, part) / stop() /
+             pause() / resume()（Stage 5：父母面板定格——只停/续 RAF，不动场景）
    ============================================================ */
 (() => {
   'use strict';
@@ -68,6 +69,18 @@
     if (resizeObserver) { resizeObserver.disconnect(); resizeObserver = null; }
     canvas = null;
     ctx = null;
+  }
+
+  /* Stage 5：父母面板定格——只停/续 RAF（位图留驻），与 stop() 的整装拆除区分 */
+  function pause() {
+    if (rafId) cancelAnimationFrame(rafId);
+    rafId = 0;
+  }
+
+  function resume() {
+    if (running && !rafId && !reducedMotion.matches && !document.hidden) {
+      rafId = requestAnimationFrame(loop);
+    }
   }
 
   /* 页面离屏/后台自动停画，回来继续（PLAN 决策 6） */
@@ -291,5 +304,5 @@
 
   const PAINTERS = { belly: paintBelly, hands: paintHand, teeth: paintTeeth, eyes: paintEye };
 
-  window.MockCam = { isEnabled, start, stop };
+  window.MockCam = { isEnabled, start, stop, pause, resume };
 })();

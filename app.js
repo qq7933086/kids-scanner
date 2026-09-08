@@ -4,9 +4,13 @@
    + ~4s 扫描计时（进度换词 + 每 0.5s 哔声）+ decideOutcome() 结果分发。
    Stage 4：到点后先把扫描源最后一帧交给 canvas-art.js 定格，
    再进 result 视图播放部位×结局动画（ResultArt.playResult）。
+   Stage 5：decideOutcome = 父母面板单次锁定（controls.js）+ 随机
+   干净 65%/发现 35%（PLAN 固定决策 5），扫完自动回落随机；
+   Stage 4 的 ?outcome= 测试钩子已按约移除，自动化改经父母面板
+   锁定结局。父母面板打开 = 停表 + 画面定格，关闭 = 从冻结处
+   续扫（DESIGN §5）；结局旋律由 audio.js playOutcome 播。
    - 文案/词表：docs/DESIGN.md §4（进度换词 0s/1.5s/3s）
    - ?mock=1 或相机失败 → mock.js 卡通画面（PLAN 固定决策 7）
-   - ?outcome=found|clean 可强制结局，供两结局自动化验证（Stage 5 换父母面板+随机）
    ============================================================ */
 (() => {
   'use strict';
@@ -41,6 +45,7 @@
   let lastBeepIdx = -1;        /* 已哔过的 0.5s 档位 */
   let lastLine = '';           /* 当前进度词（去重写 DOM） */
   let resumeOnVisible = false; /* 后台被打断的扫描，回前台从头重扫 */
+  let pausedElapsed = 0;       /* Stage 5：父母面板打开时冻结的已扫时长（ms） */
 
   /* ---------- DOM ---------- */
   const views = {
@@ -179,6 +184,13 @@
       stopStream();
       return;
     }
+    if (window.ParentControls && ParentControls.isOpen()) {
+      /* 取流期间面板已被唤起：直接进定格暂停态，等面板关闭再续扫 */
+      state.phase = 'paused';
+      pausedElapsed = 0;
+      freezePicture();
+      return;
+    }
     state.phase = 'scanning';
     scanT0 = performance.now();
     lastBeepIdx = -1;
@@ -207,9 +219,11 @@
     if (seq !== scanSeq || state.view !== 'scan') return;
     state.phase = 'idle';
     state.outcome = decideOutcome(state.part);
+    if (window.ParentControls) ParentControls.clearForced(); /* 扫完自动回落随机（DESIGN §5） */
     if (window.ResultArt) ResultArt.captureBackground(); /* 在停流前定格相机/mock 最后一帧 */
     go('result'); /* 内部会 exitScan()：离开页面停流 */
     if (window.ResultArt) ResultArt.playResult(state.part, state.outcome); /* Stage 4：结果动画 */
+    if (window.ScannerAudio) ScannerAudio.playOutcome(state.outcome); /* Stage 5：结局旋律 */
   }
 
   function stopScanTimer() {
@@ -240,11 +254,50 @@
     setScanLine(0);
   }
 
+  /* ---------- Stage 5：父母面板 开=停表定格 / 关=续扫（DESIGN §5） ---------- */
+  function freezePicture() {
+    if (state.source === 'camera') camVideo.pause(); /* 相机定格：暂停预览即冻结画面 */
+    else if (state.source === 'mock' && window.MockCam) MockCam.pause();
+    scanStage.classList.add('panel-open'); /* 扫描线停走 */
+  }
+
+  function unfreezePicture() {
+    if (state.source === 'camera') camVideo.play().catch(() => {});
+    else if (state.source === 'mock' && window.MockCam) MockCam.resume();
+    scanStage.classList.remove('panel-open');
+  }
+
+  /* 面板打开：记下已扫时长并停表 + 画面定格（哔声随计时一起停） */
+  function pauseForPanel() {
+    if (state.view !== 'scan') return;
+    if (state.phase === 'scanning') {
+      pausedElapsed = performance.now() - scanT0;
+      stopScanTimer();
+      state.phase = 'paused';
+    }
+    freezePicture();
+  }
+
+  /* 面板关闭：scanT0 回拨，从冻结处接着扫 */
+  function resumeFromPanel() {
+    if (state.view !== 'scan') return;
+    if (state.phase === 'paused') {
+      state.phase = 'scanning';
+      scanT0 = performance.now() - pausedElapsed;
+      pausedElapsed = 0;
+      stopScanTimer();
+      scanTimer = setInterval(() => tickScan(scanSeq), 100);
+    }
+    unfreezePicture();
+  }
+
   /* 重新扫描：活流复用、计时归零（『重扫复用』入口） */
   function restartScan() {
     const seq = ++scanSeq;
     stopScanTimer();
     state.phase = 'idle';
+    pausedElapsed = 0;
+    scanStage.classList.remove('panel-open'); /* 后台静默收起面板可能残留 */
     resetScanLine();
     acquireSource(seq);
   }
@@ -253,12 +306,14 @@
   function exitScan() {
     scanSeq++; /* 失效在途异步续体 */
     stopScanTimer();
+    if (window.ParentControls) ParentControls.close(true); /* 面板万一还开着：静默收起（不触发续扫钩子） */
     state.phase = 'idle';
     resumeOnVisible = false;
+    pausedElapsed = 0;
     stopStream();
     if (window.MockCam) MockCam.stop();
     state.source = null;
-    scanStage.classList.remove('mode-camera', 'mode-mock');
+    scanStage.classList.remove('mode-camera', 'mode-mock', 'panel-open');
   }
 
   /* ---------- 后台自动停流省电；回前台从头重扫 ---------- */
@@ -269,6 +324,12 @@
         stopScanTimer(); /* 后台自动停扫描（PLAN 决策 6） */
         state.phase = 'idle';
         resumeOnVisible = true;
+      } else if (state.phase === 'paused') {
+        /* 面板开着切后台：静默收起（相机流已停、续扫无意义），回前台从头重扫 */
+        if (window.ParentControls) ParentControls.close(true);
+        state.phase = 'idle';
+        pausedElapsed = 0;
+        resumeOnVisible = true;
       }
       if (state.source === 'camera') stopStream(); /* 切后台自动停流 */
     } else if (resumeOnVisible) {
@@ -278,12 +339,11 @@
   }
   document.addEventListener('visibilitychange', onVisibilityChange);
 
-  /* ---------- 结果分发（Stage 4：?outcome= 参数可强制结局，供两结局自动化验证；Stage 5 接父母面板+随机） ---------- */
+  /* ---------- 结果分发（Stage 5）：父母面板单次锁定 + 随机 干净65%/发现35%（PLAN 固定决策 5） ---------- */
   function decideOutcome(part) {
-    const forced = new URLSearchParams(window.location.search).get('outcome');
-    if (forced === 'found' || forced === 'clean') return forced;
-    /* 随机 ~65% 干净 / ~35% 发现 与父母锁定在 Stage 5 接入，本阶段默认干净 */
-    return 'clean';
+    const forced = window.ParentControls ? ParentControls.getForced() : null;
+    if (forced === 'found' || forced === 'clean') return forced; /* 单次锁定（扫完由 finishScan 清） */
+    return Math.random() < 0.65 ? 'clean' : 'found';
   }
   window.decideOutcome = decideOutcome; /* 暴露给自动化（同 window.go） */
 
@@ -301,4 +361,10 @@
     tips.hidden = !open;
     $('#btn-tips').setAttribute('aria-expanded', String(open));
   });
+
+  /* ---------- Stage 5：父母面板与静音开关接线 ---------- */
+  if (window.ParentControls) {
+    ParentControls.bind({ open: pauseForPanel, close: resumeFromPanel });
+  }
+  if (window.ScannerAudio) ScannerAudio.attach($('#btn-sound'));
 })();

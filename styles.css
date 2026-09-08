@@ -180,6 +180,9 @@ button:focus-visible {
   font-weight: 700;
 }
 
+/* Stage 5：扫描页头部右侧静音开关（与左上返回键对称） */
+#btn-sound { margin-left: auto; }
+
 .scan-notice {
   margin: 0 auto 12px;
   padding: 8px 14px;
@@ -198,6 +201,10 @@ button:focus-visible {
   border: var(--border-w) solid var(--ink);
   border-radius: var(--radius-card);
   overflow: hidden;
+  /* Stage 5：长按入口——长按别触发系统文本选择/触摸呼出 */
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
 }
 
 .scan-stage video,
@@ -283,6 +290,156 @@ button:focus-visible {
   justify-content: center;
   gap: 12px;
   padding: 10px 0 2px;
+}
+
+/* ---------- Stage 5：父母面板（DESIGN §5） ---------- */
+/* 面板打开时画面定格：扫描线停走（app.js 在打开时加 .panel-open） */
+.scan-stage.panel-open .scan-line-track { animation-play-state: paused; }
+
+/* 入口①：右下小齿轮（约 36px、70% 不透明度，视觉权重低于扫描主体；
+   命中区 44px 略大于贴图，方便爸妈按到） */
+.gear-btn {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  opacity: 0.7;
+}
+
+/* 底部抽屉：遮罩盖住整个扫描视图（含头部/操作键，暂停期间不可误触） */
+#view-scan { position: relative; }
+
+.parent-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.parent-mask {
+  position: absolute;
+  inset: 0;
+  background: rgba(62, 76, 102, 0.38); /* --ink 半透明 */
+}
+
+/* 抽屉卡片：--paper 底、圆角 20、--ink 细边、轻上滑入场（DESIGN §5） */
+.parent-drawer {
+  position: relative;
+  margin: 16px;
+  padding: 18px 16px 16px;
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  border-radius: 20px;
+  animation: drawer-in 260ms ease;
+}
+
+@keyframes drawer-in {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.parent-title {
+  text-align: center;
+  font-size: 1.15rem;
+}
+
+/* 三个单选大按钮：原生 radio 藏起来（保留键盘/语义），label 当按钮 */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.parent-options {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.parent-opt {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 54px;
+  padding: 10px 16px;
+  background: var(--white);
+  border: var(--border-w) solid var(--ink);
+  border-radius: 16px;
+  font-size: 1.08rem;
+  font-weight: 700;
+  transition: transform 120ms ease;
+}
+
+.parent-opt:active { transform: scale(0.98); }
+
+/* 三色圆点（DESIGN §5）：未选=空心，选中=填充 + 语义色描边/浅底 */
+.opt-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 3px solid var(--ink);
+  background: transparent;
+}
+
+.opt-found .opt-dot { border-color: var(--orange); }
+.opt-clean .opt-dot { border-color: var(--green); }
+.opt-random .opt-dot { border-color: var(--primary); }
+
+#pf-found:checked + .parent-opt { border-color: var(--orange); background: var(--orange-light); }
+#pf-clean:checked + .parent-opt { border-color: var(--green); background: var(--green-light); }
+#pf-random:checked + .parent-opt { border-color: var(--primary); background: var(--sky); }
+#pf-found:checked + .parent-opt .opt-dot { background: var(--orange); }
+#pf-clean:checked + .parent-opt .opt-dot { background: var(--green); }
+#pf-random:checked + .parent-opt .opt-dot { background: var(--primary); }
+
+.sr-only:focus-visible + .parent-opt {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* 说明小字 + 轻提示 */
+.parent-hint {
+  margin-top: 12px;
+  text-align: center;
+  font-size: 0.9rem;
+  opacity: 0.72;
+}
+
+.parent-toast {
+  margin-top: 10px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: var(--sky);
+  text-align: center;
+  font-size: 0.95rem;
+  animation: toast-in 240ms ease;
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+
+#btn-parent-close {
+  width: 100%;
+  margin-top: 14px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .parent-drawer { animation: none; } /* 降级：直接出现（PLAN 决策 6） */
+  .parent-toast { animation: none; }
+  .parent-opt { transition: none; }
 }
 
 /* ---------- Stage 4：结果视图（canvas 动画 + DESIGN §4 词表文案卡） ---------- */
@@ -404,4 +561,5 @@ button:focus-visible {
   .icon-btn:hover { background: var(--sky); }
   .action-btn:hover { background: var(--sky); }
   .action-btn.primary:hover { background: var(--primary-deep); }
+  .gear-btn:hover { opacity: 1; }
 }

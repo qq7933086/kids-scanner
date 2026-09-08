@@ -47,6 +47,10 @@
           <img src="assets/svg/back.svg" alt="" width="26" height="26">
         </button>
         <p id="scan-part" class="part-pill">肚肚</p>
+        <!-- Stage 5：静音开关（sound-on/off.svg，localStorage 持久化，初始默认开） -->
+        <button id="btn-sound" class="icon-btn" type="button" aria-label="静音" aria-pressed="false">
+          <img src="assets/svg/sound-on.svg" alt="" width="26" height="26">
+        </button>
       </header>
 
       <p id="scan-notice" class="scan-notice" hidden aria-live="polite">相机在休息～用卡通模式也能扫！</p>
@@ -62,6 +66,11 @@
             <div class="scan-line-track"><div class="scan-line"></div></div>
           </div>
         </div>
+
+        <!-- Stage 5：父母面板入口①——右下小齿轮（DESIGN §5，低视觉权重） -->
+        <button id="btn-parent" class="gear-btn" type="button" aria-label="爸妈小面板">
+          <img src="assets/svg/gear.svg" alt="" width="36" height="36">
+        </button>
       </div>
 
       <!-- 进度换词（DESIGN §4 通用文案：0s/1.5s/3s），app.js 按 ~4s 计时驱动 -->
@@ -70,6 +79,25 @@
       <div class="scan-actions">
         <button id="btn-rescan" class="action-btn primary" type="button">重新扫描</button>
         <button id="btn-scan-change" class="action-btn" type="button">换个部位</button>
+      </div>
+
+      <!-- Stage 5：父母面板（DESIGN §5）——底部抽屉；打开=停表定格，关闭=续扫 -->
+      <div id="parent-overlay" class="parent-overlay" hidden>
+        <div class="parent-mask" aria-hidden="true"></div>
+        <div class="parent-drawer" role="dialog" aria-modal="true" aria-label="爸妈小面板">
+          <h2 class="parent-title">爸妈小面板</h2>
+          <div class="parent-options" role="radiogroup" aria-label="选择下一次扫描的结果">
+            <input type="radio" name="parent-force" id="pf-found" value="found" class="sr-only">
+            <label for="pf-found" class="parent-opt opt-found"><span class="opt-dot" aria-hidden="true"></span>这次发现</label>
+            <input type="radio" name="parent-force" id="pf-clean" value="clean" class="sr-only">
+            <label for="pf-clean" class="parent-opt opt-clean"><span class="opt-dot" aria-hidden="true"></span>这次干净</label>
+            <input type="radio" name="parent-force" id="pf-random" value="random" class="sr-only" checked>
+            <label for="pf-random" class="parent-opt opt-random"><span class="opt-dot" aria-hidden="true"></span>随机</label>
+          </div>
+          <p class="parent-hint">只影响下一次扫描，之后自动回到随机</p>
+          <p id="parent-toast" class="parent-toast" hidden aria-live="polite"></p>
+          <button id="btn-parent-close" class="action-btn" type="button">收起</button>
+        </div>
       </div>
     </section>
 
@@ -101,6 +129,7 @@
   <script src="mock.js"></script>
   <script src="canvas-art.js"></script>
   <script src="audio.js"></script>
+  <script src="controls.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
