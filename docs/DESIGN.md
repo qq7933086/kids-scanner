@@ -73,6 +73,12 @@
 
 **新增贴图时**：遵守第 3 节规则 → 用现有 token → 干净版带徽章、发现版带脸谱 → 在 3.1 表登记。
 
+### 3.2 应用图标（Stage 6 · PWA）
+
+- `assets/icon.svg`（favicon / 任意尺寸源）：`--primary` 圆角方底（rx 28）+ 居中放大复用 `star.svg` 的主角星造型——品牌记号即「扫描后干干净净」。取色仅 §2 token，无渐变无投影。
+- `assets/icon-maskable.svg`（maskable 源）：`--primary` 满铺方底 + 星缩至 80%，主体控制在 maskable 安全区（内切圆 80%）内。
+- PNG 系列（入库）：`icon-192/512.png`（purpose any，圆角外透明）与 `icon-maskable-192/512.png`（purpose maskable，满铺）。由上述 SVG 源按目标像素精确栅格化生成；要改图标＝改两个 SVG 源后重出 PNG。
+
 ---
 
 ## 4. 部位 × 结局 文案词表

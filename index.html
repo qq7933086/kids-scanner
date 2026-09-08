@@ -3,8 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="爸妈陪同的趣味健康扫描仪：扫一扫肚肚、小手、牙齿、眼睛，看看有没有小虫虫，养成卫生好习惯。">
   <meta name="theme-color" content="#FFF7EC">
   <title>健康小卫士扫描仪</title>
+  <!-- Stage 6：PWA——manifest + 图标（iOS 添加主屏走 apple-touch-icon） -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/svg+xml" href="assets/icon.svg">
+  <link rel="apple-touch-icon" href="assets/icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="小卫士扫描仪">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -131,5 +138,15 @@
   <script src="audio.js"></script>
   <script src="controls.js"></script>
   <script src="app.js"></script>
+  <script>
+    /* Stage 6：注册 Service Worker（离线缓存）。http 非 localhost 等非安全
+       上下文里 navigator.serviceWorker 不存在，静默跳过不报错。 */
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .catch((err) => console.warn('[sw] 注册失败：', err));
+      });
+    }
+  </script>
 </body>
 </html>

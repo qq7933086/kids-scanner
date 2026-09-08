@@ -126,3 +126,46 @@
     已记录），前端复核继续由同版本 chromium 的 playwright 脚本完成。
 
 其余严格按 PLAN Stage 5 与 DESIGN §5 执行，无其他偏离。
+
+## Stage 6（PWA + 收尾）
+
+1. **应用图标为自拟构图（PLAN 留白处）**：PLAN 只说"meta 图标、可用现有贴图或简单生成
+   assets/icon 系列"。实现：新建两个 SVG 源——`assets/icon.svg`（`--primary` 圆角方底
+   rx28 + 放大 1.18 倍复用 `star.svg` 主角星；品牌记号＝「扫描后干干净净」的主角星）与
+   `assets/icon-maskable.svg`（同底满铺 + 星缩至 80%，主体落在 maskable 安全区内切圆里），
+   再经无头 chromium 按目标像素元素截图（`omitBackground` 保住圆角外透明）栅格化出
+   `icon-192/512.png` + `icon-maskable-192/512.png` 四张入库；像素级验证过
+   蓝底(77,166,232)/黄星(255,209,102)/圆角透明。按 DESIGN「新增贴图须登记」约定，
+   在 DESIGN.md 新增 **§3.2 应用图标** 登记；生成脚本一次性用完即删（重生成方式
+   §3.2 有说明）。
+2. **manifest 细节自拟（PLAN 只定了应用名/图标/display/theme token）**：short_name
+   「小卫士扫描仪」（≤12 字符）、lang zh-CN、description 自拟、`start_url`/`scope`
+   均 `'./'`（全部相对路径，GitHub Pages 子路径可直接部署）；theme_color 与
+   background_color 都取 `--paper #FFF7EC`（与既有 `meta theme-color` 一致，开屏与
+   页面底色连续）；**未加 `orientation`**——平板横屏也能玩，不做过度约束。
+3. **SW 策略（PLAN 只说"缓存静态、版本化管理"）**：`VERSION` 常量进缓存名
+   （`kids-scanner-v1`），install 预缓存 31 项（页面/5 个 JS/CSS/manifest/4 图标/
+   16 贴图），activate 删一切非当前版本缓存 + `clients.claim()` 立即接管，install
+   `skipWaiting()`；fetch 只拦同源 GET，一律 cache-first，导航请求 `ignoreSearch`
+   （`?mock=1` 离线也能开），未命中回源并顺手入缓存（只缓 2xx）。预缓存同时列
+   `'./'` 与 `'./index.html'`：同一份内容占两个键（~7KB 冗余），换直链打开也命中。
+4. **SW 注册写在 index.html 内联脚本**：PLAN 文件结构没给注册留新文件，为 5 行代码
+   单开 `sw-register.js` 不值；`'serviceWorker' in navigator` 判空后静默跳过——
+   真机用 `http://内网IP` 直连测试时（非安全上下文）不会刷 console 错误，README
+   已提醒相机与 SW 都需要 HTTPS/localhost。
+5. **「添加到主屏」无头无法验**（PLAN Stage 6 验证项）：headless 装不了 PWA，
+   offline/预缓存已无头验透（见下），主屏图标/独立窗口留给 README 的真机验收
+   清单与 Hermes 侧（PLAN「Hermes 侧」节职责）。
+6. **自检脚本 199→232 项（不入库）**：新增 manifest 合法性（字段/图标四件套为真 PNG
+   且 IHDR 尺寸与声明一致/图标像素构图 token 色）、head 接线（manifest/SVG icon/
+   apple-touch-icon/theme-color/viewport）、SW 注册接管（controller 指向 ./sw.js）、
+   预缓存 31 项逐项命中、伪造 `kids-scanner-v0` 旧缓存→重装→activate 行为级清除、
+   受控重开后 26/26 子资源含导航文档 `transferSize=0`、`context.setOffline(true)`
+   断网重开全流程（齿轮/长按两入口 × 发现/干净两结局 + console 零错 + 零失败请求）、
+   全程零外部请求（page request 全同源，场景一同步加了此断言）。browser_* 工具本
+   会话依旧不可用（`~/.cache` 只读，Stage 3 已记录），前端复核仍由同版本 chromium
+   的 playwright 完成。
+7. **README 的 vite 说法**：项目无 package.json，`npx vite` 是零配置静态伺服
+   （PLAN 技术栈本就允许 vite 只当 dev server），不是构建依赖，产物仍是纯静态。
+
+其余严格按 PLAN Stage 6 与 DESIGN token 执行，无其他偏离。
