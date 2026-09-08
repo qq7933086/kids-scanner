@@ -2,10 +2,11 @@
    健康小卫士扫描仪 — app.js
    Stage 3：相机取流生命周期（获得流 / 重扫复用 / 切后台停流 / 离场停流）
    + ~4s 扫描计时（进度换词 + 每 0.5s 哔声）+ decideOutcome() 结果分发。
+   Stage 4：到点后先把扫描源最后一帧交给 canvas-art.js 定格，
+   再进 result 视图播放部位×结局动画（ResultArt.playResult）。
    - 文案/词表：docs/DESIGN.md §4（进度换词 0s/1.5s/3s）
    - ?mock=1 或相机失败 → mock.js 卡通画面（PLAN 固定决策 7）
-   - decideOutcome 本阶段恒返回默认『干净』；Stage 4 由 canvas-art.js
-     消费 state.outcome 播结果动画，Stage 5 接父母面板控制
+   - ?outcome=found|clean 可强制结局，供两结局自动化验证（Stage 5 换父母面板+随机）
    ============================================================ */
 (() => {
   'use strict';
@@ -58,6 +59,7 @@
   function go(name) {
     if (!views[name]) return;
     if (state.view === 'scan' && name !== 'scan') exitScan();
+    if (state.view === 'result' && name !== 'result' && window.ResultArt) ResultArt.stop(); /* 离开结果页停动画 */
     for (const key of Object.keys(views)) {
       views[key].classList.toggle('active', key === name);
     }
@@ -205,7 +207,9 @@
     if (seq !== scanSeq || state.view !== 'scan') return;
     state.phase = 'idle';
     state.outcome = decideOutcome(state.part);
+    if (window.ResultArt) ResultArt.captureBackground(); /* 在停流前定格相机/mock 最后一帧 */
     go('result'); /* 内部会 exitScan()：离开页面停流 */
+    if (window.ResultArt) ResultArt.playResult(state.part, state.outcome); /* Stage 4：结果动画 */
   }
 
   function stopScanTimer() {
@@ -274,9 +278,11 @@
   }
   document.addEventListener('visibilitychange', onVisibilityChange);
 
-  /* ---------- 结果分发（Stage 3：默认『干净』；Stage 5 接父母控制/随机） ---------- */
+  /* ---------- 结果分发（Stage 4：?outcome= 参数可强制结局，供两结局自动化验证；Stage 5 接父母面板+随机） ---------- */
   function decideOutcome(part) {
-    /* 随机 ~65% 干净 / ~35% 发现 与父母锁定在 Stage 5 接入，本阶段恒返回默认 */
+    const forced = new URLSearchParams(window.location.search).get('outcome');
+    if (forced === 'found' || forced === 'clean') return forced;
+    /* 随机 ~65% 干净 / ~35% 发现 与父母锁定在 Stage 5 接入，本阶段默认干净 */
     return 'clean';
   }
   window.decideOutcome = decideOutcome; /* 暴露给自动化（同 window.go） */
@@ -289,4 +295,10 @@
   $('#btn-scan-change').addEventListener('click', () => go('home')); /* 换个部位 */
   $('#btn-again').addEventListener('click', () => go('scan'));       /* 再来一次 */
   $('#btn-change').addEventListener('click', () => go('home'));
+  $('#btn-tips').addEventListener('click', () => {                   /* 看看怎么赶走它 / 卫生小妙招 */
+    const tips = $('#result-tips');
+    const open = tips.hidden;
+    tips.hidden = !open;
+    $('#btn-tips').setAttribute('aria-expanded', String(open));
+  });
 })();

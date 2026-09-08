@@ -73,18 +73,33 @@
       </div>
     </section>
 
-    <!-- 结果视图：Stage 2 占位，Stage 4 由 canvas-art.js 播放部位×结局动画 -->
+    <!-- 结果视图：Stage 4 canvas-art.js 播放 部位×结局 动画 + DESIGN §4 词表文案 -->
     <section id="view-result" class="view" aria-label="扫描结果">
-      <img class="result-icon" src="assets/svg/star.svg" alt="" width="120" height="120">
-      <h2 class="result-title">扫描完成！</h2>
-      <div class="result-actions">
+      <div id="result-stage" class="result-stage">
+        <!-- 双层：底层定格帧（静态，仅 resize 重绘），顶层卡通动画（RAF 每帧） -->
+        <canvas id="result-bg"></canvas>
+        <canvas id="result-canvas"></canvas>
+      </div>
+
+      <!-- 主文案（大字）+ 副文案：动画主段结束后由 canvas-art.js 揭示 -->
+      <div id="result-card" class="result-card" hidden aria-live="polite">
+        <h2 id="result-title" class="result-title"></h2>
+        <p id="result-sub" class="result-sub"></p>
+      </div>
+
+      <div id="result-actions" class="result-actions" hidden>
         <button id="btn-again" class="action-btn primary" type="button">再来一次</button>
         <button id="btn-change" class="action-btn" type="button">换个部位</button>
+        <button id="btn-tips" class="action-btn" type="button" aria-expanded="false" aria-controls="result-tips"></button>
       </div>
+
+      <!-- 小妙招：点第三按钮展开的 2–3 条短句（DESIGN §4） -->
+      <ul id="result-tips" class="result-tips" hidden></ul>
     </section>
 
   </main>
   <script src="mock.js"></script>
+  <script src="canvas-art.js"></script>
   <script src="audio.js"></script>
   <script src="app.js"></script>
 </body>

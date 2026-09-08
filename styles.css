@@ -285,16 +285,57 @@ button:focus-visible {
   padding: 10px 0 2px;
 }
 
-/* ---------- 结果视图（Stage 2 占位） ---------- */
+/* ---------- Stage 4：结果视图（canvas 动画 + DESIGN §4 词表文案卡） ---------- */
+/* 兜底：hidden 不被组件的 display 规则覆盖 */
+[hidden] { display: none !important; }
+
 #view-result {
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
+  gap: 14px;
   text-align: center;
 }
 
+/* 动画舞台：背景=定格帧（canvas 绘制），描边随结局走三色语义 */
+.result-stage {
+  position: relative;
+  flex: 1;
+  min-height: 300px;
+  background: var(--sky);
+  border: var(--border-w) solid var(--primary);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+}
+
+/* 双层画布：底层定格帧 + 顶层卡通动画（z 序即 DOM 序） */
+.result-stage canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* 三色语义（DESIGN §2）：绿=干净/表扬，橙=发现/提醒 */
+#view-result.outcome-clean .result-stage { border-color: var(--green); }
+#view-result.outcome-found .result-stage { border-color: var(--orange); }
+
+/* 文案卡：结局底色用 DESIGN 指定的 light token */
+.result-card {
+  padding: 16px 18px 14px;
+  background: var(--paper);
+  border: var(--border-w) solid var(--ink);
+  border-radius: var(--radius-card);
+}
+
+#view-result.outcome-clean .result-card { background: var(--green-light); }
+#view-result.outcome-found .result-card { background: var(--orange-light); }
+
 .result-title {
-  font-size: clamp(1.4rem, 6vw, 1.9rem);
+  font-size: clamp(1.35rem, 6vw, 1.8rem);
+}
+
+.result-sub {
+  margin-top: 6px;
+  font-size: 1rem;
+  opacity: 0.85;
 }
 
 .result-actions {
@@ -302,7 +343,39 @@ button:focus-visible {
   flex-wrap: wrap;
   justify-content: center;
   gap: 12px;
-  margin-top: 12px;
+}
+
+/* 第三按钮带结局语义色 */
+#view-result.outcome-clean #btn-tips { background: var(--green); color: var(--white); }
+#view-result.outcome-found #btn-tips { background: var(--orange); color: var(--white); }
+
+/* 小妙招：点按钮展开的 2–3 条短句 */
+.result-tips {
+  list-style: none;
+  padding: 12px 16px;
+  background: var(--white);
+  border: var(--border-w) solid var(--ink);
+  border-radius: 16px;
+  text-align: left;
+  font-size: 0.98rem;
+}
+
+.result-tips li + li { margin-top: 8px; }
+
+/* 文案卡/按钮/小妙招入场：动画主段结束后由 canvas-art.js 揭示 */
+.result-card:not([hidden]),
+.result-actions:not([hidden]),
+.result-tips:not([hidden]) { animation: card-in 320ms ease; }
+
+@keyframes card-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .result-card:not([hidden]),
+  .result-actions:not([hidden]),
+  .result-tips:not([hidden]) { animation: none; }
 }
 
 .action-btn {

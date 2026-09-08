@@ -44,3 +44,41 @@
    同版本 chromium 的 playwright 脚本完成（截图在 `.pw-shots/`，不入库）。
 
 其余严格按 PLAN Stage 3 与 DESIGN token/文案执行，无其他偏离。
+
+## Stage 4（结果动画层 canvas-art.js）
+
+1. **`?outcome=found|clean` 测试参数（临时桥接）**：PLAN Stage 4 验证要求"`?mock=1` 两种结局都能
+   自动走到并播放对应动画"，但随机 ~65%/~35% 与父母锁定按计划属 Stage 5，Stage 3 的
+   decideOutcome 恒返回 clean。故本阶段给 decideOutcome 加最小测试钩子：URL 参数强制结局
+   （无参数仍默认 clean）。**Stage 5 接入父母面板后应移除或并入面板逻辑。**
+2. **双层 canvas 架构（实现方式，非设计偏离）**：PLAN 只说"Canvas 播放"。实测无头软件渲染下，
+   单画布每帧对定格帧做 cover 重采样（~110 万像素）会掉到 ~16fps；拆成"背景定格层（静态，
+   仅 resize 时重绘一次）+ 动画层（clearRect + 小贴图，RAF 每帧）"后单帧绘制 ~1.2ms。
+   sparkle 的闪烁改用透明度脉动而非尺寸脉动（避免 SVG 贴图逐帧重栅格化）。
+3. **相机定格帧按预览同向镜像**：scan 视频预览带 `transform:scaleX(-1)`（Stage 3 约定），
+   截帧时同样镜像，保证结果页定格与扫描页所见连续。mock 帧无此问题。
+4. **手动触发兼容（PLAN 验证示例）**：`window.playResult` 暴露（同 `window.go` 先例）；
+   outcome 除 `clean|found` 外收生物名别名（`worm/germ/cavity/cavity-germ/foreign-body`），
+   兼容 PLAN 的 `playResult('belly','worm')` 调用方式；手动触发时若无定格帧，会从 mock
+   画布位图补截（mock 停画后位图仍在，但相机流停后 video 不可靠，故正常流程由 app.js
+   在停流前调用 `ResultArt.captureBackground()` 截帧）。
+5. **揭示时机**：PLAN"结束出按钮"具体化为动画主段 ~2.6s 后揭示主/副文案卡 + 三按钮
+   （320ms 上滑入场）；`prefers-reduced-motion` 下取动画 1.4s 时刻画一张静帧构图并立即揭示。
+6. **自检脚本 `.pw-verify.mjs` 84→130 项（不入库）**：Stage 2 的 result 占位断言
+   （"扫描完成！"标题/两按钮）随占位移除演进为 Stage 4 词表断言；eyes 眼白像素采样改
+   两次取最大并将 Stage 2 遗留阈值 8%→7%（mock 眨眼/眼珠转动下实测满开 7.6%~9% 波动，
+   8% 贴边抖动，两处均为测试脚本修正、非应用改动）；各场景页用完即
+   `close()`——同一浏览器里多页的结果动画 RAF 会互相抢占软件渲染（实测 44fps→16fps）。
+   另：本轮 chromium 启动还需
+   `LD_LIBRARY_PATH=.pw-browsers/_libs/extracted/usr/lib/x86_64-linux-gnu`
+   （缺 libnspr4/libnss3，Stage 3 未记录此细节）。
+7. **帧率断言为相对值**：无头软件渲染（SwiftShader）下绝对帧率随 VM 负载在 16~63fps 波动
+   （home 静页 63、mock 扫描动画 33~58、结果动画 16~44），绝对阈值不可靠。改为
+   "动画进行中 ≥ 同页停播基线的 40% + 绝对下限 15fps"（实测动画 36~40fps / 停播 62fps）。
+   draw 单帧耗时 ~1.2ms（clearRect 0.07 + 色罩 0.03 + 贴图 1.1），真机 60fps 有充足余量。
+8. 本阶段会话 browser_* 工具依旧不可用（`~/.cache` 只读挂载，Stage 3 已记录），视觉复核由
+   同版本 chromium 的 playwright 完成：布局断言（舞台/文案卡/按钮/小妙招的几何关系与
+   DPR=2 位图尺寸）+ 截图存 `.pw-shots/`（不入库）。已无头验证：两结局自动走通、四部位
+   found 生物齐全、词表文案/语义色严格对齐 DESIGN、console 零错误零失败请求。
+
+其余严格按 PLAN Stage 4 与 DESIGN token/文案执行，无其他偏离。
