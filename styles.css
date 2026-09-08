@@ -218,21 +218,72 @@ button:focus-visible {
   transform: scaleX(-1);
 }
 
-/* 临时：mock 画面专用调试入口（Stage 3 移除），显隐由 app.js 用 hidden 控制 */
-.mock-done {
-  display: block;
-  margin: 14px auto 4px;
-  padding: 10px 20px;
-  background: var(--white);
-  border: 2px dashed var(--grey);
-  border-radius: 999px;
-  font-size: 0.95rem;
+/* ---------- Stage 3：扫描仪式感（准星框 + 上下往返扫描线） ---------- */
+/* 视觉语言同 assets/svg/scan-frame.svg：白衬底 + 扫描蓝，压在画面上可见（DESIGN §2） */
+.scan-overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none; /* 不挡画面与按钮 */
 }
 
-.mock-done:active { background: var(--sky); }
+.scan-frame-wrap {
+  position: relative;
+  width: min(68%, 300px);
+  aspect-ratio: 1 / 1;
+}
 
-/* .mock-done 设了 display，须显式压过 [hidden] 才能隐藏 */
-.mock-done[hidden] { display: none; }
+.scan-frame-wrap img {
+  width: 100%;
+  height: 100%;
+}
+
+/* 扫描线往返区域：准星框内圈（框角在 120 视图的 20~100，即 17%~83%） */
+.scan-line-track {
+  position: absolute;
+  top: 17%;
+  bottom: 17%;
+  left: 0;
+  right: 0;
+  animation: scan-sweep 1.7s ease-in-out infinite alternate;
+}
+
+/* 扫描线本体：扫描蓝胶囊 + 白衬底描边（scan-frame 语言），transform 动画走合成器 */
+.scan-line {
+  position: absolute;
+  top: 0;
+  left: 20%;
+  right: 20%;
+  height: 13px;
+  border: 3px solid var(--white);
+  border-radius: 999px;
+  background: var(--primary);
+}
+
+@keyframes scan-sweep {
+  from { transform: translateY(0); }
+  to   { transform: translateY(calc(100% - 13px)); } /* 100% = 往返区高度 */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scan-line-track { animation: none; } /* 降级：停走（PLAN 决策 6） */
+}
+
+/* ---------- Stage 3：进度换词 + 扫描中的操作 ---------- */
+.scan-status {
+  margin: 14px auto 4px;
+  text-align: center;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.scan-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  padding: 10px 0 2px;
+}
 
 /* ---------- 结果视图（Stage 2 占位） ---------- */
 #view-result {
@@ -280,5 +331,4 @@ button:focus-visible {
   .icon-btn:hover { background: var(--sky); }
   .action-btn:hover { background: var(--sky); }
   .action-btn.primary:hover { background: var(--primary-deep); }
-  .mock-done:hover { background: var(--sky); }
 }

@@ -40,7 +40,7 @@
       </nav>
     </section>
 
-    <!-- 扫描视图：相机画面 / mock 卡通画面（Stage 3 补扫描线与计时） -->
+    <!-- 扫描视图：相机/mock 画面 + 扫描仪式感 + ~4s 计时（Stage 3） -->
     <section id="view-scan" class="view" aria-label="扫描">
       <header class="scan-head">
         <button id="btn-back" class="icon-btn" type="button" aria-label="返回首页">
@@ -54,10 +54,23 @@
       <div id="scan-stage" class="scan-stage">
         <video id="cam-video" playsinline muted autoplay></video>
         <canvas id="mock-canvas"></canvas>
+
+        <!-- 扫描仪式感：准星框（assets scan-frame）+ 上下往返扫描线（styles.css） -->
+        <div class="scan-overlay" aria-hidden="true">
+          <div class="scan-frame-wrap">
+            <img src="assets/svg/scan-frame.svg" alt="">
+            <div class="scan-line-track"><div class="scan-line"></div></div>
+          </div>
+        </div>
       </div>
 
-      <!-- 临时：mock 画面下走通 scan→result 全流程；Stage 3 由 ~4s 计时替换后移除 -->
-      <button id="btn-mock-done" class="mock-done" type="button" hidden>模拟扫描完成</button>
+      <!-- 进度换词（DESIGN §4 通用文案：0s/1.5s/3s），app.js 按 ~4s 计时驱动 -->
+      <p id="scan-status" class="scan-status" aria-live="polite">正在扫描…别动哦</p>
+
+      <div class="scan-actions">
+        <button id="btn-rescan" class="action-btn primary" type="button">重新扫描</button>
+        <button id="btn-scan-change" class="action-btn" type="button">换个部位</button>
+      </div>
     </section>
 
     <!-- 结果视图：Stage 2 占位，Stage 4 由 canvas-art.js 播放部位×结局动画 -->
@@ -72,6 +85,7 @@
 
   </main>
   <script src="mock.js"></script>
+  <script src="audio.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
