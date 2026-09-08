@@ -1,0 +1,284 @@
+/* ============================================================
+   健康小卫士扫描仪 — styles.css
+   - 配色 token 唯一真源：docs/DESIGN.md §2（SVG 贴图内是 hex 字面量）
+   - 风格（DESIGN §1）：扁平圆润卡通——无渐变、无投影、无滤镜
+   ============================================================ */
+
+:root {
+  /* 配色 token（DESIGN §2） */
+  --ink: #3E4C66;
+  --paper: #FFF7EC;
+  --primary: #4DA6E8;
+  --primary-deep: #2E7FC2;
+  --sky: #D9EEFB;
+  --green: #5FC96E;
+  --green-light: #DFF4E1;
+  --orange: #FFA94D;
+  --orange-deep: #F08A2C;
+  --orange-light: #FFEBD1;
+  --yellow: #FFD166;
+  --pink: #F87EA0;
+  --blush: #FFB3C6;
+  --skin: #FFD8B8;
+  --lilac: #A794EA;
+  --lilac-deep: #8570D6;
+  --grey: #AEB9CE;
+  --white: #FFFFFF;
+
+  --border-w: 3px;
+  --radius-card: 24px;
+  --font-stack: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB",
+    "Microsoft YaHei", "Segoe UI", sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-stack);
+  background: var(--paper);
+  color: var(--ink);
+  -webkit-tap-highlight-color: transparent;
+  -webkit-font-smoothing: antialiased;
+}
+
+img { display: block; max-width: 100%; }
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+button:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+
+#app {
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- 视图切换：go(view) 只切 .active ---------- */
+.view {
+  display: none;
+  flex: 1;
+  flex-direction: column;
+  padding: 16px;
+}
+
+.view.active {
+  display: flex;
+  animation: view-in 240ms ease;
+}
+
+@keyframes view-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .view.active { animation: none; }
+}
+
+/* ---------- 首页 ---------- */
+.home-head {
+  text-align: center;
+  padding: 26px 8px 4px;
+}
+
+.app-badge {
+  width: 76px;
+  height: 76px;
+  margin: 0 auto 14px;
+  display: grid;
+  place-items: center;
+  background: var(--sky);
+  border: var(--border-w) solid var(--ink);
+  border-radius: 26px;
+}
+
+.home-head h1 {
+  font-size: clamp(1.5rem, 7vw, 2rem);
+  letter-spacing: 0.02em;
+}
+
+.subtitle {
+  margin-top: 8px;
+  font-size: 1rem;
+  opacity: 0.75;
+}
+
+.part-grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  align-content: center;
+  padding: 18px 2px 10px;
+}
+
+.part-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 136px;
+  padding: 18px 10px;
+  background: var(--sky);
+  border: var(--border-w) solid var(--ink);
+  border-radius: var(--radius-card);
+  transition: transform 120ms ease, background-color 120ms ease;
+}
+
+.part-btn:active {
+  background: var(--primary);
+  transform: scale(0.96);
+}
+
+.part-btn:active .part-name { color: var(--white); }
+
+.part-name {
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+/* ---------- 扫描视图 ---------- */
+.scan-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 2px 0 12px;
+}
+
+.icon-btn {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  background: var(--white);
+  border: var(--border-w) solid var(--ink);
+  border-radius: 16px;
+}
+
+.part-pill {
+  padding: 8px 18px;
+  background: var(--sky);
+  border: var(--border-w) solid var(--ink);
+  border-radius: 999px;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.scan-notice {
+  margin: 0 auto 12px;
+  padding: 8px 14px;
+  background: var(--orange-light);
+  border: 2px solid var(--orange);
+  border-radius: 12px;
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+.scan-stage {
+  position: relative;
+  flex: 1;
+  min-height: 300px;
+  background: var(--sky);
+  border: var(--border-w) solid var(--ink);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+}
+
+.scan-stage video,
+.scan-stage canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  visibility: hidden; /* 由 mode-mock / mode-camera 决定显示谁 */
+}
+
+.scan-stage.mode-mock canvas { visibility: visible; }
+.scan-stage.mode-camera video { visibility: visible; }
+
+/* 后摄预览镜像（PLAN Stage 3 约定） */
+.scan-stage video {
+  object-fit: cover;
+  transform: scaleX(-1);
+}
+
+/* 临时：mock 画面专用调试入口（Stage 3 移除），显隐由 app.js 用 hidden 控制 */
+.mock-done {
+  display: block;
+  margin: 14px auto 4px;
+  padding: 10px 20px;
+  background: var(--white);
+  border: 2px dashed var(--grey);
+  border-radius: 999px;
+  font-size: 0.95rem;
+}
+
+.mock-done:active { background: var(--sky); }
+
+/* .mock-done 设了 display，须显式压过 [hidden] 才能隐藏 */
+.mock-done[hidden] { display: none; }
+
+/* ---------- 结果视图（Stage 2 占位） ---------- */
+#view-result {
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  text-align: center;
+}
+
+.result-title {
+  font-size: clamp(1.4rem, 6vw, 1.9rem);
+}
+
+.result-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.action-btn {
+  min-height: 52px;
+  padding: 12px 26px;
+  background: var(--white);
+  border: var(--border-w) solid var(--ink);
+  border-radius: 999px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  transition: transform 120ms ease, background-color 120ms ease;
+}
+
+.action-btn:active { transform: scale(0.96); }
+
+.action-btn.primary {
+  background: var(--primary);
+  color: var(--white);
+}
+
+.action-btn.primary:active { background: var(--primary-deep); }
+
+/* ---------- 桌面悬停（触屏不触发） ---------- */
+@media (hover: hover) {
+  .part-btn:hover { background: var(--white); }
+  .icon-btn:hover { background: var(--sky); }
+  .action-btn:hover { background: var(--sky); }
+  .action-btn.primary:hover { background: var(--primary-deep); }
+  .mock-done:hover { background: var(--sky); }
+}

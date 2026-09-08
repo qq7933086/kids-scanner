@@ -3,3 +3,8 @@ node_modules/
 dist/
 .DS_Store
 *.local
+
+# DSH 本地验证工具链（playwright 浏览器/截图/脚本），不入库
+.pw-browsers/
+.pw-shots/
+.pw-verify.mjs
