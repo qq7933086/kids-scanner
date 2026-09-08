@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <title>开声音</title>
+  <path d="M42 52 L60 36 V84 L42 68 Z" fill="#4DA6E8" stroke="#3E4C66" stroke-width="6" stroke-linejoin="round"/>
+  <rect x="22" y="50" width="22" height="20" rx="5" fill="#4DA6E8" stroke="#3E4C66" stroke-width="6"/>
+  <path d="M72 48 Q86 60 72 72" fill="none" stroke="#3E4C66" stroke-width="6" stroke-linecap="round"/>
+  <path d="M84 40 Q102 60 84 80" fill="none" stroke="#3E4C66" stroke-width="6" stroke-linecap="round"/>
+</svg>

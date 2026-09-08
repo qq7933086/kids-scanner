@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <title>设置齿轮</title>
+  <g fill="#4DA6E8" stroke="#3E4C66" stroke-width="6">
+    <rect x="54" y="26" width="12" height="18" rx="6"/>
+    <rect x="54" y="26" width="12" height="18" rx="6" transform="rotate(45 60 64)"/>
+    <rect x="54" y="26" width="12" height="18" rx="6" transform="rotate(90 60 64)"/>
+    <rect x="54" y="26" width="12" height="18" rx="6" transform="rotate(135 60 64)"/>
+    <rect x="54" y="26" width="12" height="18" rx="6" transform="rotate(180 60 64)"/>
+    <rect x="54" y="26" width="12" height="18" rx="6" transform="rotate(225 60 64)"/>
+    <rect x="54" y="26" width="12" height="18" rx="6" transform="rotate(270 60 64)"/>
+    <rect x="54" y="26" width="12" height="18" rx="6" transform="rotate(315 60 64)"/>
+    <circle cx="60" cy="64" r="23"/>
+    <circle cx="60" cy="64" r="9" fill="#FFF7EC"/>
+  </g>
+</svg>

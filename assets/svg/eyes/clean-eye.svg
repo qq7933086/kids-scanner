@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <title>干净亮眼睛</title>
+  <defs>
+    <clipPath id="eye-clip">
+      <path d="M24 64 Q60 24 96 64 Q60 96 24 64 Z"/>
+    </clipPath>
+  </defs>
+  <path d="M24 64 Q60 24 96 64 Q60 96 24 64 Z" fill="#FFFFFF" stroke="#3E4C66" stroke-width="6" stroke-linejoin="round"/>
+  <g clip-path="url(#eye-clip)">
+    <circle cx="60" cy="64" r="17" fill="#4DA6E8"/>
+    <circle cx="60" cy="64" r="7.5" fill="#3E4C66"/>
+    <circle cx="54.5" cy="58.5" r="3" fill="#FFFFFF"/>
+    <circle cx="64.5" cy="69" r="1.6" fill="#FFFFFF"/>
+  </g>
+  <path d="M42 49 L37 41" stroke="#3E4C66" stroke-width="6" stroke-linecap="round"/>
+  <path d="M52.8 44.8 L50.5 35.5" stroke="#3E4C66" stroke-width="6" stroke-linecap="round"/>
+  <path d="M67.2 44.8 L69.5 35.5" stroke="#3E4C66" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="96" cy="28" r="12" fill="#5FC96E" stroke="#3E4C66" stroke-width="6"/>
+  <path d="M90.5 28 L95 32.5 L102.5 24" fill="none" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

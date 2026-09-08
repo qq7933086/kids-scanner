@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <title>小细菌</title>
+  <circle cx="86" cy="64" r="6" fill="#A794EA" stroke="#3E4C66" stroke-width="6"/>
+  <circle cx="78.4" cy="82.4" r="6" fill="#A794EA" stroke="#3E4C66" stroke-width="6"/>
+  <circle cx="60" cy="90" r="6" fill="#A794EA" stroke="#3E4C66" stroke-width="6"/>
+  <circle cx="41.6" cy="82.4" r="6" fill="#A794EA" stroke="#3E4C66" stroke-width="6"/>
+  <circle cx="34" cy="64" r="6" fill="#A794EA" stroke="#3E4C66" stroke-width="6"/>
+  <circle cx="41.6" cy="45.6" r="6" fill="#A794EA" stroke="#3E4C66" stroke-width="6"/>
+  <circle cx="60" cy="38" r="6" fill="#A794EA" stroke="#3E4C66" stroke-width="6"/>
+  <circle cx="78.4" cy="45.6" r="6" fill="#A794EA" stroke="#3E4C66" stroke-width="6"/>
+  <circle cx="60" cy="64" r="26" fill="#A794EA" stroke="#3E4C66" stroke-width="6"/>
+  <circle cx="48" cy="52" r="2.4" fill="#8570D6"/>
+  <circle cx="72" cy="52" r="2.4" fill="#8570D6"/>
+  <circle cx="52" cy="60" r="3.4" fill="#3E4C66"/>
+  <circle cx="68" cy="60" r="3.4" fill="#3E4C66"/>
+  <circle cx="53.2" cy="58.8" r="1.1" fill="#FFFFFF"/>
+  <circle cx="69.2" cy="58.8" r="1.1" fill="#FFFFFF"/>
+  <path d="M52 70 Q60 78 68 70" fill="none" stroke="#3E4C66" stroke-width="6" stroke-linecap="round"/>
+  <ellipse cx="44" cy="69" rx="4" ry="2.8" fill="#FFB3C6"/>
+  <ellipse cx="76" cy="69" rx="4" ry="2.8" fill="#FFB3C6"/>
+</svg>

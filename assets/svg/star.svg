@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <title>干净星星（带脸）</title>
+  <path d="M60 24 L71.2 50.6 L99.9 53 L78.1 71.9 L84.7 100 L60 85 L35.3 100 L41.9 71.9 L20.1 53 L48.8 50.6 Z"
+        fill="#FFD166" stroke="#3E4C66" stroke-width="6" stroke-linejoin="round"/>
+  <circle cx="51" cy="58" r="3.4" fill="#3E4C66"/>
+  <circle cx="69" cy="58" r="3.4" fill="#3E4C66"/>
+  <circle cx="52.2" cy="56.8" r="1.1" fill="#FFFFFF"/>
+  <circle cx="70.2" cy="56.8" r="1.1" fill="#FFFFFF"/>
+  <path d="M51 67 Q60 75 69 67" fill="none" stroke="#3E4C66" stroke-width="6" stroke-linecap="round"/>
+  <ellipse cx="48" cy="68" rx="4" ry="2.8" fill="#FFB3C6"/>
+  <ellipse cx="72" cy="68" rx="4" ry="2.8" fill="#FFB3C6"/>
+</svg>

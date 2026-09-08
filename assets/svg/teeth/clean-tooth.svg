@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <title>干净牙齿</title>
+  <path d="M38 42 C38 28 50 22 60 24 C70 22 82 28 82 42 C84 54 81 62 75 68 C73.5 72 73 78 73 84 C73 92 65 93 63 86 C62 81 60 77 60 73 C60 77 58 81 57 86 C55 93 47 92 47 84 C47 78 46.5 72 45 68 C39 62 36 54 38 42 Z"
+        fill="#FFFFFF" stroke="#3E4C66" stroke-width="6" stroke-linejoin="round"/>
+  <circle cx="52" cy="44" r="3.4" fill="#3E4C66"/>
+  <circle cx="68" cy="44" r="3.4" fill="#3E4C66"/>
+  <circle cx="53.2" cy="42.8" r="1.1" fill="#FFFFFF"/>
+  <circle cx="69.2" cy="42.8" r="1.1" fill="#FFFFFF"/>
+  <path d="M52 54 Q60 62 68 54" fill="none" stroke="#3E4C66" stroke-width="6" stroke-linecap="round"/>
+  <ellipse cx="43" cy="52" rx="4" ry="2.8" fill="#FFB3C6"/>
+  <ellipse cx="77" cy="52" rx="4" ry="2.8" fill="#FFB3C6"/>
+  <circle cx="94" cy="28" r="12" fill="#5FC96E" stroke="#3E4C66" stroke-width="6"/>
+  <path d="M88.5 28 L93 32.5 L100.5 24" fill="none" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

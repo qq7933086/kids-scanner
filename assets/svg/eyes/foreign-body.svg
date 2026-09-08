@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <title>眼睛小灰尘</title>
+  <path d="M18 44 h9" stroke="#3E4C66" stroke-width="6" stroke-linecap="round"/>
+  <path d="M14 57 h8" stroke="#3E4C66" stroke-width="6" stroke-linecap="round"/>
+  <path d="M20 70 h9" stroke="#3E4C66" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="48" cy="56" r="5" fill="#AEB9CE" stroke="#3E4C66" stroke-width="6"/>
+  <circle cx="82" cy="58" r="4" fill="#AEB9CE" stroke="#3E4C66" stroke-width="6"/>
+  <circle cx="74" cy="82" r="4.5" fill="#AEB9CE" stroke="#3E4C66" stroke-width="6"/>
+  <circle cx="52" cy="80" r="4" fill="#AEB9CE" stroke="#3E4C66" stroke-width="6"/>
+  <ellipse cx="64" cy="66" rx="20" ry="17" fill="#AEB9CE" stroke="#3E4C66" stroke-width="6"/>
+  <circle cx="58" cy="62" r="3" fill="#3E4C66"/>
+  <circle cx="70" cy="62" r="3" fill="#3E4C66"/>
+  <circle cx="59" cy="61" r="1" fill="#FFFFFF"/>
+  <circle cx="71" cy="61" r="1" fill="#FFFFFF"/>
+  <path d="M58 71 Q64 76 70 71" fill="none" stroke="#3E4C66" stroke-width="6" stroke-linecap="round"/>
+  <ellipse cx="52" cy="68" rx="3.5" ry="2.4" fill="#FFB3C6"/>
+  <ellipse cx="76" cy="68" rx="3.5" ry="2.4" fill="#FFB3C6"/>
+</svg>
